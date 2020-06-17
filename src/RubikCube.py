@@ -67,7 +67,7 @@ def rotation(side: int, turns: int):
         triangle_cycle.append(ch)
     triangle_transform = transform_corners(triangle_cycle,turns)
     edge_transform = transform_edges(edge_cycle,turns)
-    return edge_cycle, triangle_cycle
+    return edge_transform, triangle_transform
 
 
 CYCLES, CORNERS, CORNER_CHOICE = generate_data()
