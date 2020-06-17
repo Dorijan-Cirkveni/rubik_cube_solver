@@ -4,7 +4,7 @@ from src.util import decompress
 
 
 class RubikCubeState(GameState):
-    def __init__(self, edgeData: int, cornerData:int):
+    def __init__(self, edgeData: int, cornerData: int):
         self.edgeData = edgeData
         self.cornerData = cornerData
         return
@@ -15,10 +15,15 @@ class RubikCubeState(GameState):
     def nextSteps(self):
         return
 
-    def apply_rotation(self,side,turns):
-        edgeRotation, cornerRotation = rotation(side,turns)
-        edges_raw = decompress(self.edgeData,5)
-        corners_raw = decompress(self.cornerData,5)
-        edges=[divmod(e,4) for e in edges_raw]
-        corners=[divmod(e,4) for e in corners_raw]
+    def apply_rotation(self, side, turns):
+        edgeRotation, cornerRotation = rotation(side, turns)
+        edges_raw = decompress(self.edgeData, 5)
+        corners_raw = decompress(self.cornerData, 5)
+        edges = [divmod(e, 4) for e in edges_raw]
+        corners = [divmod(e, 4) for e in corners_raw]
+        return
 
+
+if __name__ == "__main__":
+    X = RubikCubeState(0, 0)
+    X.apply_rotation(0, 1)
