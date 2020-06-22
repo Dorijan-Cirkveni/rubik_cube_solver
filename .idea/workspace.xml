@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2c98f436-25e1-4448-b257-b0bf43d784df" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RubikCube.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/RubikCube.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RubikCubeState.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/RubikCubeState.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util.py" afterDir="false" />
-    </list>
+    <list default="true" id="2c98f436-25e1-4448-b257-b0bf43d784df" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,6 +140,7 @@
       <workItem from="1592260075894" duration="152000" />
       <workItem from="1592379994212" duration="2424000" />
       <workItem from="1592422353447" duration="2618000" />
+      <workItem from="1592465956635" duration="597000" />
     </task>
     <task id="LOCAL-00001" summary="Commit via PyCharm">
       <created>1592403406084</created>
