@@ -3,13 +3,14 @@ def Edgecycle(side):
     X = [i + c for i in range(4)]
     return X if side < 3 else X[::-1]
 
+
 def transform_edges(L, steps):
     n = len(L)
     D = dict()
     for i in range(n):
         E = L[i]
         F = L[(i - steps) % n]
-        D[E] = (F, steps&1)
+        D[E] = (F, steps & 1)
     return D
 
 
@@ -54,7 +55,7 @@ def determine_edge(a: int, b: int):
     elif ib - ia > 1:
         ia += 4
     ret = (c << 2) + min(ia, ib)
-    return ret,ia>ib
+    return ret, ia > ib
 
 
 def rotation(side: int, turns: int):
@@ -65,8 +66,8 @@ def rotation(side: int, turns: int):
         tri = (side, cycle[i], cycle[(i + 1) & 3])
         ch = CORNER_CHOICE[tri]
         triangle_cycle.append(ch)
-    triangle_transform = transform_corners(triangle_cycle,turns)
-    edge_transform = transform_edges(edge_cycle,turns)
+    triangle_transform = transform_corners(triangle_cycle, turns)
+    edge_transform = transform_edges(edge_cycle, turns)
     return edge_transform, triangle_transform
 
 
@@ -75,7 +76,13 @@ CYCLES, CORNERS, CORNER_CHOICE = generate_data()
 
 def main():
     for i in range(6):
-        print(rotation(i, 1))
+        for j in range(6):
+            if i==j or i+j==5:
+                print("__",end=",")
+            else:
+                pr=determine_edge(i,j)
+                print("{:2}{}".format(pr[0],"+-"[pr[1]]),end=" ")
+        print()
     return
 
 
