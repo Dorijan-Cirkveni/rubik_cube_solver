@@ -1,7 +1,55 @@
-def Edgecycle(side):
-    c = min(side, 5 - side) << 2
-    X = [i + c for i in range(4)]
-    return X if side < 3 else X[::-1]
+'''
+Corner -> 3 bits, each bit indicate which side is used
+[0|5][1|4][2|3]
+Edge -> 12 edges, 4 per side pair
+'''
+
+
+def pairnumber(n):
+    return [n, 5 - n][n > 2]
+
+
+def generate_data():
+    cycles = [[2, 1], [0, 2], [1, 0]]
+    cycles = [e + [5 - f for f in e] for e in cycles]
+    cycles += [e[::-1] for e in cycles[::-1]]
+    return cycles
+
+
+CYCLES = generate_data()
+
+
+def indexToCorner(n):
+    L = list(bin(n)[-3:])
+    R = [[i, 5 - i][L[i]] for i in range(3)]
+    return R
+
+
+def cornerToIndex(R):
+    n = 0
+    for i in range(3):
+        n += (int(R[i] > 2)) << i
+    return
+
+
+def indexToEdge(n):
+    c, ind = divmod(n, 4)
+    XT = CYCLES[c]
+    X = XT + XT[:1]
+    return XT[ind], XT[ind + 1]
+
+
+def edgeToIndex(a, b):
+    c = 3 - a - b
+    XT = CYCLES[c]
+    X = XT + XT[:1]
+    ia = X.index(a)
+    ib = X.index(b)
+    if ia > ib + 1:
+        ib += 4
+    elif ib > ia + 1:
+        ia += 4
+    return
 
 
 def transform_edges(L, steps):
@@ -24,65 +72,16 @@ def transform_corners(L, steps):
     return D
 
 
-def generate_data():
-    cycles = [[2, 1], [0, 2], [1, 0]]
-    cycles = [e + [5 - f for f in e] for e in cycles]
-    cycles += [e[::-1] for e in cycles[::-1]]
-    triangles = list()
-    triangle_choice = dict()
-    for i in range(6):
-        cycle = cycles[i]
-        for j in range(4):
-            tri = (i, cycle[j], cycle[(j + 1) & 3])
-            ix = int(tri[1] < tri[0])
-            if tri[2] < tri[ix]:
-                ix = 2
-            if ix == 0:
-                triangle_choice[tri] = (len(triangles), 0)
-                triangles.append(tri)
-            else:
-                tri2 = (tri + tri)[ix:][:3]
-                triangle_choice[tri] = (triangle_choice[tri2][0], ix)
-    return cycles, triangles, triangle_choice
-
-
-def determine_edge(a: int, b: int):
-    c = min({0, 1, 2} - {min(a, 5 - a), min(b, 5 - b)})
-    cycle = CYCLES[c]
-    ia, ib = cycle.index(a), cycle.index(b)
-    if ia - ib > 1:
-        ib += 4
-    elif ib - ia > 1:
-        ia += 4
-    ret = (c << 2) + min(ia, ib)
-    return ret, ia > ib
-
-
 def rotation(side: int, turns: int):
     cycle = CYCLES[side]
     triangle_cycle = list()
-    edge_cycle = Edgecycle(side)
-    for i in range(4):
-        tri = (side, cycle[i], cycle[(i + 1) & 3])
-        ch = CORNER_CHOICE[tri]
-        triangle_cycle.append(ch)
+    edge_cycle = []
     triangle_transform = transform_corners(triangle_cycle, turns)
     edge_transform = transform_edges(edge_cycle, turns)
     return edge_transform, triangle_transform
 
 
-CYCLES, CORNERS, CORNER_CHOICE = generate_data()
-
-
 def main():
-    for i in range(6):
-        for j in range(6):
-            if i==j or i+j==5:
-                print("__",end=",")
-            else:
-                pr=determine_edge(i,j)
-                print("{:2}{}".format(pr[0],"+-"[pr[1]]),end=" ")
-        print()
     return
 
 
