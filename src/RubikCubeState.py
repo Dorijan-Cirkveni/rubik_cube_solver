@@ -29,11 +29,11 @@ class RubikCubeState(GameState):
         for i in range(6):
             for j in range(1, 4):
                 nextstate = self.apply_rotation(i, j)
-                steps[(i, j)]
-        return
+                steps[(i, j)] = nextstate
+        return steps
 
     def getdata(self):
-        X = [(0, 0) for i in range(12)]
+        X = [(0, 0)]*12
         edges_raw = decompress(self.edgeData, 5)
         corners_raw = decompress(self.cornerData, 5)
         edges = ([divmod(e, 2) for e in edges_raw] + X)[:12]
@@ -56,20 +56,20 @@ class RubikCubeState(GameState):
             if i in edgeRotation:
                 er = edgeRotation[i]
                 newedge = edges[er[0]]
-                renewededge = (newedge[0],(newedge[1]+er[1])%2)
+                renewededge = (newedge[0], (newedge[1] + er[1]) % 2)
                 newedges.append(renewededge)
             else:
                 newedges.append(edges[i])
-        newcorners=[]
+        newcorners = []
         for i in range(8):
             if i in cornerRotation:
                 cr = cornerRotation[i]
-                newcorner =corners[cr[0]]
-                renewedcorner = (newcorner[0],(newcorner[1]+er[1])%3)
+                newcorner = corners[cr[0]]
+                renewedcorner = (newcorner[0], (newcorner[1] + cr[1]) % 3)
                 newcorners.append(renewedcorner)
             else:
                 newcorners.append(corners[i])
-        newstate.setdata(newedges,newcorners)
+        newstate.setdata(newedges, newcorners)
         return newstate
 
 
@@ -79,5 +79,5 @@ if __name__ == "__main__":
     _X = RubikCubeState(0, 0)
     _X.setdata(_a, _b)
     print(_X.getdata())
-    _Y=_X.apply_rotation(0,1)
+    _Y = _X.apply_rotation(0, 1)
     print(_Y.getdata())
