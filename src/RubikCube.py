@@ -9,27 +9,21 @@ def pairnumber(n):
     return [n, 5 - n][n > 2]
 
 
-def generate_data():
-    cycles = [[2, 1], [0, 2], [1, 0]]
-    cycles = [e + [5 - f for f in e] for e in cycles]
-    cycles += [e[::-1] for e in cycles[::-1]]
-    return cycles
+CYCLES = [[2, 1, 3, 4], [0, 2, 5, 3], [1, 0, 4, 5], [5, 4, 0, 1], [3, 5, 2, 0], [4, 3, 1, 2]]
 
 
-CYCLES = generate_data()
-
-
-def indexToCorner(n):
-    L = list(bin(n)[-3:])
+def indexToCorner(n, offset=0):
+    L = [int(e) for e in bin(8+n)[-3:]]
     R = [[i, 5 - i][L[i]] for i in range(3)]
-    return R
+    return (R + R)[3 - offset:][:3]
 
 
 def cornerToIndex(R):
     n = 0
+    X = [pairnumber(e) for e in R]
     for i in range(3):
-        n += (int(R[i] > 2)) << i
-    return
+        n += (int(R[i] != X[i])) << i
+    return n,X.index(0)
 
 
 def indexToEdge(n):
@@ -40,7 +34,7 @@ def indexToEdge(n):
 
 
 def edgeToIndex(a, b):
-    c = 3 - a - b
+    c = 3 - pairnumber(a) - pairnumber(b)
     XT = CYCLES[c]
     X = XT + XT[:1]
     ia = X.index(a)
@@ -49,7 +43,7 @@ def edgeToIndex(a, b):
         ib += 4
     elif ib > ia + 1:
         ia += 4
-    return
+    return (c << 2) + min(ia, ib), ia > ib
 
 
 def transform_edges(L, steps):
@@ -74,14 +68,16 @@ def transform_corners(L, steps):
 
 def rotation(side: int, turns: int):
     cycle = CYCLES[side]
-    triangle_cycle = list()
-    edge_cycle = []
+    triangle_cycle = []
+    edge_cycle = [edgeToIndex(side, e) for e in cycle]
     triangle_transform = transform_corners(triangle_cycle, turns)
     edge_transform = transform_edges(edge_cycle, turns)
     return edge_transform, triangle_transform
 
 
 def main():
+    A=[indexToCorner(i,1) for i in range(8)]
+    B=[cornerToIndex(e) for e in A]
     return
 
 

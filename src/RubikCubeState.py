@@ -33,7 +33,7 @@ class RubikCubeState(GameState):
         return steps
 
     def getdata(self):
-        X = [(0, 0)]*12
+        X = [(0, 0)] * 12
         edges_raw = decompress(self.edgeData, 5)
         corners_raw = decompress(self.cornerData, 5)
         edges = ([divmod(e, 2) for e in edges_raw] + X)[:12]
@@ -79,5 +79,6 @@ if __name__ == "__main__":
     _X = RubikCubeState(0, 0)
     _X.setdata(_a, _b)
     print(_X.getdata())
-    _Y = _X.apply_rotation(0, 1)
-    print(_Y.getdata())
+    _st = _X.nextSteps()
+    for _e in _st:
+        print(_e, _st[_e].getdata())
