@@ -1,8 +1,40 @@
 from functools import total_ordering
 
 from src.GameState import GameState
-from src.RubikCube import rotation
-from src.util import decompress, compress
+from src.util import *
+
+EDGECYCLES = [
+    [0, 6, 1, 4], [0, 2, 10, 3], [2, 4, 8, 5], [3, 7, 9, 6], [1, 9, 11, 8], [5, 11, 7, 10]
+]
+CORNERCYCLES = [
+    [0, 1, 3, 2], [0, 4, 5, 1], [0, 2, 6, 4], [5, 7, 6, 4], [6, 7, 3, 2], [3, 7, 5, 1]
+]
+
+
+def get_corner(index):
+    L = list()
+    for i in range(3):
+        L.append(i if (index & (4 >> i)) == 0 else 5 - i)
+    if index in {0, 3, 5, 6}:
+        L[1], L[2] = L[2], L[1]
+    return L
+
+
+def rotation(side, turns):
+    etr = EDGECYCLES[side]
+    ctr = CORNERCYCLES[side]
+    et = transformation(etr, turns)
+    ct = transformation(ctr, turns)
+    turn_factor = turns & 1
+    step_value = 3 - side
+    etf = {e: (et[e], turn_factor) for e in et}
+    ctf = dict()
+    crn = {e: set(get_corner(e)) for e in ctr}
+    for e in ct:
+        eL = crn[e]-{side}
+        eL2 = crn[ct[e]]-{side}
+
+    return
 
 
 @total_ordering
@@ -24,12 +56,15 @@ class RubikCubeState(GameState):
     def isFinal(self):
         raise NotImplementedError
 
+    def transform(self):
+
+        return
+
     def nextSteps(self):
         steps = dict()
         for i in range(6):
             for j in range(1, 4):
-                nextstate = self.apply_rotation(i, j)
-                steps[(i, j)] = nextstate
+                pass
         return steps
 
     def getdata(self):
@@ -47,38 +82,14 @@ class RubikCubeState(GameState):
         self.cornerData = compress(corners_raw, 5)
         return
 
-    def apply_rotation(self, side, turns):
-        edges, corners = self.getdata()
-        edgeRotation, cornerRotation = rotation(side, turns)
-        newstate = RubikCubeState(0, 0)
-        newedges = []
-        for i in range(12):
-            if i in edgeRotation:
-                er = edgeRotation[i]
-                newedge = edges[er[0]]
-                renewededge = (newedge[0], (newedge[1] + er[1]) % 2)
-                newedges.append(renewededge)
-            else:
-                newedges.append(edges[i])
-        newcorners = []
-        for i in range(8):
-            if i in cornerRotation:
-                cr = cornerRotation[i]
-                newcorner = corners[cr[0]]
-                renewedcorner = (newcorner[0], (newcorner[1] + cr[1]) % 3)
-                newcorners.append(renewedcorner)
-            else:
-                newcorners.append(corners[i])
-        newstate.setdata(newedges, newcorners)
-        return newstate
+
+def main():
+    RC = RubikCubeState(0, 0)
+    X = [get_edge(i) for i in range(8)]
+    RC.setdata(identitylist(12), identitylist(8))
+    rotation(0, 1)
+    return
 
 
 if __name__ == "__main__":
-    _a = [(i, 0) for i in range(12)]
-    _b = [(i, 0) for i in range(8)]
-    _X = RubikCubeState(0, 0)
-    _X.setdata(_a, _b)
-    print(_X.getdata())
-    _st = _X.nextSteps()
-    for _e in _st:
-        print(_e, _st[_e].getdata())
+    main()

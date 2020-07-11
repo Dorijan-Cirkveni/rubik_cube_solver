@@ -1,3 +1,7 @@
+def identitylist(size):
+    return [(i, 0) for i in range(size)]
+
+
 def compress(values, size):
     n = 0
     while len(values) > 0:
@@ -14,9 +18,14 @@ def decompress(n, size):
     return values
 
 
+def transformation(cycle, offset):
+    n = len(cycle)
+    return {cycle[i]: cycle[(i - offset) % n] for i in range(n)}
+
+
 if __name__ == "__main__":
-    n=2345
-    X=decompress(n,5)
-    Y=(X+[0 for i in range(20)])[:12]
-    m=compress(Y[:],5)
-    print(n,X,Y,m)
+    _n = 2345
+    X = decompress(_n, 5)
+    Y = (X + [0 for i in range(20)])[:12]
+    m = compress(Y[:], 5)
+    print(_n, X, Y, m)
