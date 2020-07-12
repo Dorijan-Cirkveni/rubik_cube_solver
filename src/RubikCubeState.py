@@ -16,13 +16,32 @@ def pair(side):
     return [0, 1, 2, 2, 1, 0][side]
 
 
-def get_corner(index):
+def get_corner(index, offset=0):
     L = list()
     for i in range(3):
         L.append(i if (index & (4 >> i)) == 0 else 5 - i)
     if index in {0, 3, 5, 6}:
         L[1], L[2] = L[2], L[1]
+    offset %= 3
+    if offset != 0:
+        L = (L + L)[:-offset][-3:]
     return L
+
+
+def get_edge(index):
+    a = index // 2
+    b = (pair(a) + 1) % 3
+    if a % 2:
+        b = 5 - b
+    return a, b
+
+
+def cornerside_to_location(index, offset):
+    return [offset, 5 - offset][(index & (4 >> offset)) != 0]
+
+
+def edgeside_to_location(index, offset):
+    return get_edge(index)
 
 
 def rotation(side, turns):
@@ -96,12 +115,31 @@ class RubikCubeState(GameState):
         self.cornerData = compress(corners_raw, 5)
         return
 
+    def simpledisplay(self):
+        T = [[[-1 for k in range(3)] for j in range(3)] for i in range(6)]
+        edges, corners = self.getdata()
+        for i in range(6):
+            T[i][1][1] = i
+        for i in range(12):
+            e = edges[i]
+            A1, A2 = get_edge(i)
+            B1, B2 = get_edge(e[0])
+            if e[1]:
+                B1, B2 = B2, B1
+        return
+
 
 def main():
+    for i in range(8):
+        for j in range(3):
+            print(get_corner(i, j), end="-")
+        print()
     RC = RubikCubeState(0, 0)
     RC.setdata(identitylist(12), identitylist(8))
-    X = rotation(0, 1)
+    X = rotation(2, 1)
     Y = RC.transform(X)
+    Y.simpledisplay()
+    Z=Y.getdata()
     return
 
 
