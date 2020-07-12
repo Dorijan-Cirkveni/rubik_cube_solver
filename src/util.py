@@ -18,9 +18,25 @@ def decompress(n, size):
     return values
 
 
-def transformation(cycle, offset):
+def generate_transformation(cycle, offset, function=lambda x: x):
     n = len(cycle)
-    return {cycle[i]: cycle[(i - offset) % n] for i in range(n)}
+    return {cycle[i]: function(cycle[(i - offset) % n]) for i in range(n)}
+
+
+def combine_transformations(A, B, combination, retrieve=lambda x: x[0]):
+    A: dict
+    B: dict
+    changed = set(A.keys()) | set(B.keys())
+    new = dict()
+    for e in changed:
+        if e in B:
+            e2 = retrieve(B[e])
+            if e2 in A:
+                new[e] = combination(A[e2], B[e])
+            else:
+                new[e] = B[e]
+        else:
+            new[e] = A[e]
 
 
 if __name__ == "__main__":

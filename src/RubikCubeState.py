@@ -1,6 +1,7 @@
 from functools import total_ordering
 
 from src.GameState import GameState
+from src.Transformation import Transformation
 from src.util import *
 
 EDGECYCLES = [
@@ -9,6 +10,10 @@ EDGECYCLES = [
 CORNERCYCLES = [
     [0, 1, 3, 2], [0, 4, 5, 1], [0, 2, 6, 4], [5, 7, 6, 4], [6, 7, 3, 2], [3, 7, 5, 1]
 ]
+
+
+def pair(side):
+    return [0, 1, 2, 2, 1, 0][side]
 
 
 def get_corner(index):
@@ -21,20 +26,14 @@ def get_corner(index):
 
 
 def rotation(side, turns):
+    turn_factor = turns & 1
+    step_value = 3 - pair(side)
+    turn = tuple([(step_value - i) % 3 for i in range(3)])
     etr = EDGECYCLES[side]
     ctr = CORNERCYCLES[side]
-    et = transformation(etr, turns)
-    ct = transformation(ctr, turns)
-    turn_factor = turns & 1
-    step_value = 3 - side
-    etf = {e: (et[e], turn_factor) for e in et}
-    ctf = dict()
-    crn = {e: set(get_corner(e)) for e in ctr}
-    for e in ct:
-        eL = crn[e]-{side}
-        eL2 = crn[ct[e]]-{side}
-
-    return
+    et = generate_transformation(etr, turns, lambda x: (x, turn_factor))
+    ct = generate_transformation(ctr, turns, lambda x: (x, turn))
+    return Transformation(et, ct)
 
 
 @total_ordering
@@ -56,9 +55,24 @@ class RubikCubeState(GameState):
     def isFinal(self):
         raise NotImplementedError
 
-    def transform(self):
-
-        return
+    def transform(self, transformation):
+        transformation: Transformation
+        edges, corners = self.getdata()
+        newedges = []
+        newcorners = []
+        et = transformation.edge_transform
+        ct = transformation.corner_transform
+        for i in range(12):
+            X = et[i] if i in et else (i, 0)
+            Y = edges[X[0]]
+            newedges.append((Y[0], Y[1] ^ X[1]))
+        for i in range(8):
+            X = ct[i] if i in ct else (i, (0, 1, 2))
+            Y = corners[X[0]]
+            newcorners.append((Y[0], X[1][Y[1]]))
+        newstate = RubikCubeState(0, 0)
+        newstate.setdata(newedges, newcorners)
+        return newstate
 
     def nextSteps(self):
         steps = dict()
@@ -85,9 +99,9 @@ class RubikCubeState(GameState):
 
 def main():
     RC = RubikCubeState(0, 0)
-    X = [get_edge(i) for i in range(8)]
     RC.setdata(identitylist(12), identitylist(8))
-    rotation(0, 1)
+    X = rotation(0, 1)
+    Y = RC.transform(X)
     return
 
 
